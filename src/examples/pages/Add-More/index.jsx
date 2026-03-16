@@ -20,7 +20,7 @@ import {
   progressBarStyles,
   progressContainerStyles,
   titleStyles,
-} from '../../constants/sharedStyles';
+} from '../../css/sharedStyles';
 import { URLS } from '../../constants';
 
 function AddMoreGuidePopup({ isVisible, onClose }) {

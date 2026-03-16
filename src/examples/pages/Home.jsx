@@ -19,7 +19,7 @@ import {
   progressBarStyles,
   progressContainerStyles,
   titleStyles,
-} from '../constants/sharedStyles';
+} from '../css/sharedStyles';
 
 const { Title, Paragraph } = Typography;
 
