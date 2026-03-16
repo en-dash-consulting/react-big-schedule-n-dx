@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 import { AddMorePopover, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
-import DemoData from '../../../sample-data/sample1';
+import DemoData from '../../sample-data/sample1';
 
 let schedulerData;
 
