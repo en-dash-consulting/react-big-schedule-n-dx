@@ -1,6 +1,7 @@
 import { Component } from 'react';
 
-import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import DemoData from '../../../sample-data/sample1';
 
 class Readonly extends Component {
   constructor(props) {

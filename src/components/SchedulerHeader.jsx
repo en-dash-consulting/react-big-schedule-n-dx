@@ -3,7 +3,7 @@ import { Calendar, Col, Popover, Radio, Row, Space, Spin } from 'antd';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
-import { DATE_FORMAT } from '../config/default';
+import { DATE_FORMAT } from '../config/constants';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;

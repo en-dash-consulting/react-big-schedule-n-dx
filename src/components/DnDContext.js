@@ -1,4 +1,4 @@
-import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/default';
+import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/constants';
 import { getPos } from '../helper/utility';
 
 export default class DnDContext {

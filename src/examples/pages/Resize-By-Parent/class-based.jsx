@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { Component, createRef } from 'react';
-import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import DemoData from '../../../sample-data/sample1';
 
 // Top-level constant for initial SchedulerData, following other examples
 const getInitialSchedulerData = () => {

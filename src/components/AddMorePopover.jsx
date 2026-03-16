@@ -6,7 +6,26 @@ import DnDSource from './DnDSource';
 import EventItem from './EventItem';
 
 function AddMorePopover(props) {
-  const { schedulerData, headerItem, left, top, height, closeAction } = props;
+  const {
+    schedulerData,
+    headerItem,
+    left,
+    top,
+    height,
+    closeAction,
+    subtitleGetter,
+    moveEvent,
+    eventItemClick,
+    viewEventClick,
+    viewEventText,
+    viewEvent2Click,
+    viewEvent2Text,
+    eventItemTemplateResolver,
+    eventItemPopoverTemplateResolver,
+    updateEventStart,
+    updateEventEnd,
+    conflictOccurred,
+  } = props;
   const { config, localeDayjs } = schedulerData;
   const { time, start, end, events } = headerItem;
 
@@ -25,8 +44,8 @@ function AddMorePopover(props) {
 
       return (
         <EventItem
-          {...props}
           key={evt.eventItem.id}
+          schedulerData={schedulerData}
           eventItem={evt.eventItem}
           dndSource={dndSource}
           leftIndex={0}
@@ -37,6 +56,18 @@ function AddMorePopover(props) {
           left={10}
           width={138}
           top={eventItemTop}
+          subtitleGetter={subtitleGetter}
+          moveEvent={moveEvent}
+          eventItemClick={eventItemClick}
+          viewEventClick={viewEventClick}
+          viewEventText={viewEventText}
+          viewEvent2Click={viewEvent2Click}
+          viewEvent2Text={viewEvent2Text}
+          eventItemTemplateResolver={eventItemTemplateResolver}
+          eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
+          updateEventStart={updateEventStart}
+          updateEventEnd={updateEventEnd}
+          conflictOccurred={conflictOccurred}
         />
       );
     }
@@ -75,6 +106,10 @@ AddMorePopover.propTypes = {
   viewEvent2Click: PropTypes.func,
   viewEvent2Text: PropTypes.string,
   eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
+  updateEventStart: PropTypes.func,
+  updateEventEnd: PropTypes.func,
+  conflictOccurred: PropTypes.func,
 };
 
 export default AddMorePopover;

@@ -2,7 +2,7 @@ import { Popover } from 'antd';
 import { PropTypes } from 'prop-types';
 import { Component } from 'react';
 import { useDrag } from 'react-dnd';
-import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';
+import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/constants';
 import EventItemPopover from './EventItemPopover';
 
 const stopDragHelper = ({ count, cellUnit, config, dragType, eventItem, localeDayjs, value }) => {
@@ -492,15 +492,29 @@ class EventItem extends Component {
 
     if (eventItem.bgColor) bgColor = eventItem.bgColor;
 
+    const {
+      subtitleGetter,
+      viewEventClick,
+      viewEventText,
+      viewEvent2Click,
+      viewEvent2Text,
+      eventItemPopoverTemplateResolver,
+    } = this.props;
     const titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, eventItem);
     const content = (
       <EventItemPopover
-        {...this.props}
+        schedulerData={schedulerData}
         eventItem={eventItem}
         title={eventItem.title}
         startTime={eventItem.start}
         endTime={eventItem.end}
         statusColor={bgColor}
+        subtitleGetter={subtitleGetter}
+        viewEventClick={viewEventClick}
+        viewEventText={viewEventText}
+        viewEvent2Click={viewEvent2Click}
+        viewEvent2Text={viewEvent2Text}
+        eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
       />
     );
 
@@ -677,6 +691,7 @@ EventItem.propTypes = {
   viewEvent2Text: PropTypes.string,
   conflictOccurred: PropTypes.func,
   eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 EventItem.defaultProps = {
@@ -694,4 +709,5 @@ EventItem.defaultProps = {
   viewEvent2Text: undefined,
   conflictOccurred: undefined,
   eventItemTemplateResolver: undefined,
+  eventItemPopoverTemplateResolver: undefined,
 };

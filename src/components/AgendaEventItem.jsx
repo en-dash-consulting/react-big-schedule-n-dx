@@ -3,7 +3,20 @@ import PropTypes from 'prop-types';
 import EventItemPopover from './EventItemPopover';
 
 function AgendaEventItem(props) {
-  const { eventItem, isStart, isEnd, eventItemClick, schedulerData, eventItemTemplateResolver } = props;
+  const {
+    eventItem,
+    isStart,
+    isEnd,
+    eventItemClick,
+    schedulerData,
+    eventItemTemplateResolver,
+    subtitleGetter,
+    viewEventClick,
+    viewEventText,
+    viewEvent2Click,
+    viewEvent2Text,
+    eventItemPopoverTemplateResolver,
+  } = props;
   const { config, behaviors } = schedulerData;
 
   let roundCls = 'round-none';
@@ -49,11 +62,18 @@ function AgendaEventItem(props) {
 
   const content = (
     <EventItemPopover
-      {...props}
+      schedulerData={schedulerData}
+      eventItem={eventItem}
       title={eventItem.title}
       startTime={eventItem.start}
       endTime={eventItem.end}
       statusColor={backgroundColor}
+      subtitleGetter={subtitleGetter}
+      viewEventClick={viewEventClick}
+      viewEventText={viewEventText}
+      viewEvent2Click={viewEvent2Click}
+      viewEvent2Text={viewEvent2Text}
+      eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
     />
   );
 
@@ -78,6 +98,7 @@ AgendaEventItem.propTypes = {
   viewEvent2Click: PropTypes.func,
   viewEvent2Text: PropTypes.string,
   eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 export default AgendaEventItem;

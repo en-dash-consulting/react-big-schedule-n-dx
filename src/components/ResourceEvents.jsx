@@ -1,7 +1,7 @@
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import { useDrop } from 'react-dnd';
-import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
+import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/constants';
 import { getPos } from '../helper/utility';
 import AddMore from './AddMore';
 import EventItem from './EventItem';
@@ -27,6 +27,7 @@ class ResourceEvents extends Component {
     viewEvent2Text: PropTypes.string,
     newEvent: PropTypes.func,
     eventItemTemplateResolver: PropTypes.func,
+    eventItemPopoverTemplateResolver: PropTypes.func,
   };
 
   constructor(props) {
@@ -284,14 +285,34 @@ class ResourceEvents extends Component {
   };
 
   render() {
-    const { resourceEvents, schedulerData, dndSource } = this.props;
+    const {
+      resourceEvents,
+      schedulerData,
+      dndSource,
+      updateEventStart,
+      updateEventEnd,
+      moveEvent,
+      subtitleGetter,
+      eventItemClick,
+      viewEventClick,
+      viewEventText,
+      viewEvent2Click,
+      viewEvent2Text,
+      conflictOccurred,
+      eventItemTemplateResolver,
+      eventItemPopoverTemplateResolver,
+    } = this.props;
     const { cellUnit, startDate, endDate, config, localeDayjs } = schedulerData;
     const { isSelecting, left, width } = this.state;
     const cellWidth = schedulerData.getContentCellWidth();
     const cellMaxEvents = schedulerData.getCellMaxEvents();
     const rowWidth = schedulerData.getContentTableWidth();
 
-    const selectedArea = isSelecting ? <SelectedArea {...this.props} left={left} width={width} /> : <div />;
+    const selectedArea = isSelecting ? (
+      <SelectedArea schedulerData={schedulerData} left={left} width={width} />
+    ) : (
+      <div />
+    );
 
     const eventList = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
@@ -360,8 +381,8 @@ class ResourceEvents extends Component {
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
-                {...this.props}
                 key={`${evt.eventItem.id}_${headerItem.time}`}
+                schedulerData={schedulerData}
                 eventItem={evt.eventItem}
                 dndSource={dndSource}
                 isStart={isStart}
@@ -372,6 +393,18 @@ class ResourceEvents extends Component {
                 top={top}
                 leftIndex={index}
                 rightIndex={index + evt.span}
+                updateEventStart={updateEventStart}
+                updateEventEnd={updateEventEnd}
+                moveEvent={moveEvent}
+                subtitleGetter={subtitleGetter}
+                eventItemClick={eventItemClick}
+                viewEventClick={viewEventClick}
+                viewEventText={viewEventText}
+                viewEvent2Click={viewEvent2Click}
+                viewEvent2Text={viewEvent2Text}
+                conflictOccurred={conflictOccurred}
+                eventItemTemplateResolver={eventItemTemplateResolver}
+                eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
               />
             );
             eventList.push(eventItem);
@@ -384,8 +417,8 @@ class ResourceEvents extends Component {
           const top = marginTop + headerItem.addMoreIndex * config.eventItemLineHeight;
           const addMoreItem = (
             <AddMore
-              {...this.props}
               key={headerItem.time}
+              schedulerData={schedulerData}
               headerItem={headerItem}
               number={headerItem.addMore}
               left={left}

@@ -1,6 +1,7 @@
 import { Col, Row, Typography } from 'antd';
 import { Component } from 'react';
-import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import DemoData from '../../../sample-data/sample1';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';

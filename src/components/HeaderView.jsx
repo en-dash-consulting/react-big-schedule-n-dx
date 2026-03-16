@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { CellUnit } from '../config/default';
+import { CellUnit } from '../config/constants';
 import { useCallback, useMemo } from 'react';
 
 /**

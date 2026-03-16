@@ -4,10 +4,16 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { RRuleSet, rrulestr } from 'rrule';
-import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, ViewType } from '../config/default';
-import config from '../config/scheduler';
+import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, ViewType } from '../config/constants';
+import config from '../config/defaults';
 import { getDefaultLabels, getLabel } from '../config/i18n';
 import behaviors from '../helper/behaviors';
+
+// Register dayjs plugins once at module load time, not per instance
+dayjs.extend(quarterOfYear);
+dayjs.extend(weekday);
+dayjs.extend(utc);
+dayjs.extend(isoWeek);
 
 export default class SchedulerData {
   constructor(
@@ -34,10 +40,6 @@ export default class SchedulerData {
     this._shouldReloadViewType = false;
 
     this.calendarPopoverLocale = undefined;
-    dayjs.extend(quarterOfYear);
-    dayjs.extend(weekday);
-    dayjs.extend(utc);
-    dayjs.extend(isoWeek);
     this.localeDayjs = dayjs;
     this.config = newConfig === undefined ? config : { ...config, ...newConfig };
     this._updateLabelsFromI18n();

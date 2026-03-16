@@ -1,4 +1,4 @@
-import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/default';
+import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/constants';
 
 export default class DnDSource {
   constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {

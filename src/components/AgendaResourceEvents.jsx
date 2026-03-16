@@ -2,7 +2,20 @@ import PropTypes from 'prop-types';
 import AgendaEventItem from './AgendaEventItem';
 
 function AgendaResourceEvents(props) {
-  const { schedulerData, resourceEvents, slotClickedFunc, slotItemTemplateResolver } = props;
+  const {
+    schedulerData,
+    resourceEvents,
+    slotClickedFunc,
+    slotItemTemplateResolver,
+    subtitleGetter,
+    eventItemClick,
+    viewEventClick,
+    viewEventText,
+    viewEvent2Click,
+    viewEvent2Text,
+    eventItemTemplateResolver,
+    eventItemPopoverTemplateResolver,
+  } = props;
   const { startDate, endDate, config, localeDayjs } = schedulerData;
   const width = schedulerData.getResourceTableWidth() - 2;
 
@@ -21,11 +34,19 @@ function AgendaResourceEvents(props) {
         const isEnd = eventEnd < durationEnd;
         return (
           <AgendaEventItem
-            {...props}
             key={evt.eventItem.id}
+            schedulerData={schedulerData}
             eventItem={evt.eventItem}
             isStart={isStart}
             isEnd={isEnd}
+            subtitleGetter={subtitleGetter}
+            eventItemClick={eventItemClick}
+            viewEventClick={viewEventClick}
+            viewEventText={viewEventText}
+            viewEvent2Click={viewEvent2Click}
+            viewEvent2Text={viewEvent2Text}
+            eventItemTemplateResolver={eventItemTemplateResolver}
+            eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
           />
         );
       });
@@ -86,6 +107,8 @@ AgendaResourceEvents.propTypes = {
   viewEvent2Text: PropTypes.string,
   slotClickedFunc: PropTypes.func,
   slotItemTemplateResolver: PropTypes.func,
+  eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 export default AgendaResourceEvents;

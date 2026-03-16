@@ -1,4 +1,4 @@
-import { ViewType, CellUnit } from '../config/default';
+import { ViewType, CellUnit } from '../config/constants';
 
 export const getSummary = () => ({ text: 'Summary', color: 'red', fontSize: '1.2rem' });
 

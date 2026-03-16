@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { SummaryPos } from '../config/default';
+import { SummaryPos } from '../config/constants';
 
 function Summary({ schedulerData, summary, left, width, top }) {
   const { config } = schedulerData;

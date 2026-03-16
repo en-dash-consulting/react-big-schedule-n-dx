@@ -3,7 +3,6 @@ export {
   CellUnit,
   DATETIME_FORMAT,
   DATE_FORMAT,
-  DemoData,
   DnDContext,
   DnDSource,
   Scheduler,

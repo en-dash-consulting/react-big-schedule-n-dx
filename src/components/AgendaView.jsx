@@ -2,7 +2,19 @@ import PropTypes from 'prop-types';
 import AgendaResourceEvents from './AgendaResourceEvents';
 
 function AgendaView(props) {
-  const { schedulerData } = props;
+  const {
+    schedulerData,
+    subtitleGetter,
+    eventItemClick,
+    viewEventClick,
+    viewEventText,
+    viewEvent2Click,
+    viewEvent2Text,
+    slotClickedFunc,
+    slotItemTemplateResolver,
+    eventItemTemplateResolver,
+    eventItemPopoverTemplateResolver,
+  } = props;
   const { config, renderData } = schedulerData;
 
   const agendaResourceTableWidth = schedulerData.getResourceTableWidth();
@@ -11,7 +23,21 @@ function AgendaView(props) {
   const { agendaViewHeader } = config;
 
   const resourceEventsList = renderData.map(item => (
-    <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />
+    <AgendaResourceEvents
+      key={item.slotId}
+      schedulerData={schedulerData}
+      resourceEvents={item}
+      subtitleGetter={subtitleGetter}
+      eventItemClick={eventItemClick}
+      viewEventClick={viewEventClick}
+      viewEventText={viewEventText}
+      viewEvent2Click={viewEvent2Click}
+      viewEvent2Text={viewEvent2Text}
+      slotClickedFunc={slotClickedFunc}
+      slotItemTemplateResolver={slotItemTemplateResolver}
+      eventItemTemplateResolver={eventItemTemplateResolver}
+      eventItemPopoverTemplateResolver={eventItemPopoverTemplateResolver}
+    />
   ));
 
   return (
@@ -42,6 +68,9 @@ AgendaView.propTypes = {
   viewEvent2Click: PropTypes.func,
   viewEvent2Text: PropTypes.string,
   slotClickedFunc: PropTypes.func,
+  slotItemTemplateResolver: PropTypes.func,
+  eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 export default AgendaView;
