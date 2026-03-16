@@ -2,7 +2,7 @@ import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/constants';
-import { getPos } from '../helper/utility';
+import { getPos } from './domUtils';
 import AddMore from './AddMore';
 import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';

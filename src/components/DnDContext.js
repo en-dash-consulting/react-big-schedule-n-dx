@@ -1,5 +1,5 @@
 import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/constants';
-import { getPos } from '../helper/utility';
+import { getPos } from './domUtils';
 
 export default class DnDContext {
   constructor(sources) {
