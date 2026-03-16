@@ -1,4 +1,5 @@
-import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/constants';
+import { DnDTypes } from '../config/constants';
+import { computeEventDropTimes } from '../helper/dndHelper';
 
 export default class DnDSource {
   constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {
@@ -15,47 +16,25 @@ export default class DnDSource {
       if (!monitor.didDrop()) return;
 
       const { moveEvent, newEvent, schedulerData } = props;
-      const { events, config, viewType, localeDayjs } = schedulerData;
+      const { events, config, localeDayjs } = schedulerData;
       const item = monitor.getItem();
       const type = monitor.getItemType();
       const dropResult = monitor.getDropResult();
-      let { slotId } = dropResult;
-      let { slotName } = dropResult;
-      let newStart = dropResult.start;
-      let newEnd = dropResult.end;
       const { initialStart } = dropResult;
-      // const { initialEnd } = dropResult;
-      let action = 'New';
 
+      const drop = computeEventDropTimes({
+        schedulerData,
+        item,
+        type,
+        newStart: dropResult.start,
+        newEnd: dropResult.end,
+        initialStart,
+        slotId: dropResult.slotId,
+        slotName: dropResult.slotName,
+      });
+
+      const { newStart, newEnd, slotId, slotName, action } = drop;
       const isEvent = type === DnDTypes.EVENT;
-      if (isEvent) {
-        const event = item;
-        if (config.relativeMove) {
-          newStart = localeDayjs(event.start)
-            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart))), 'ms')
-            .format(DATETIME_FORMAT);
-        } else if (viewType !== ViewType.Day) {
-          const tmpDayjs = localeDayjs(newStart);
-          newStart = localeDayjs(event.start)
-            .year(tmpDayjs.year())
-            .month(tmpDayjs.month())
-            .date(tmpDayjs.date())
-            .format(DATETIME_FORMAT);
-        }
-        newEnd = localeDayjs(newStart)
-          .add(localeDayjs(event.end).diff(localeDayjs(event.start)), 'ms')
-          .format(DATETIME_FORMAT);
-
-        // if crossResourceMove disabled, slot returns old value
-        if (config.crossResourceMove === false) {
-          slotId = schedulerData._getEventSlotId(item);
-          slotName = undefined;
-          const slot = schedulerData.getSlotById(slotId);
-          if (slot) slotName = slot.name;
-        }
-
-        action = 'Move';
-      }
 
       let hasConflict = false;
       if (config.checkConflict) {

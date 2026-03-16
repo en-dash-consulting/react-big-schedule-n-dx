@@ -1,4 +1,5 @@
-import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/constants';
+import { DnDTypes, CellUnit, DATETIME_FORMAT } from '../config/constants';
+import { computeEventDropTimes } from '../helper/dndHelper';
 import { getPos } from './domUtils';
 
 export default class DnDContext {
@@ -66,7 +67,7 @@ export default class DnDContext {
 
     hover: (props, monitor, component) => {
       const { schedulerData, resourceEvents, movingEvent } = props;
-      const { cellUnit, config, viewType, localeDayjs } = schedulerData;
+      const { cellUnit, config, localeDayjs } = schedulerData;
       this.config = config;
       const item = monitor.getItem();
       const type = monitor.getItemType();
@@ -99,40 +100,19 @@ export default class DnDContext {
           .second(59)
           .format(DATETIME_FORMAT);
       }
-      let { slotId, slotName } = resourceEvents;
-      let action = 'New';
-      const isEvent = type === DnDTypes.EVENT;
-      if (isEvent) {
-        const event = item;
-        if (config.relativeMove) {
-          newStart = localeDayjs(event.start)
-            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart))), 'ms')
-            .format(DATETIME_FORMAT);
-        } else if (viewType !== ViewType.Day) {
-          const tmpDayjs = localeDayjs(newStart);
-          newStart = localeDayjs(event.start)
-            .year(tmpDayjs.year())
-            .month(tmpDayjs.month())
-            .date(tmpDayjs.date())
-            .format(DATETIME_FORMAT);
-        }
-        newEnd = localeDayjs(newStart)
-          .add(localeDayjs(event.end).diff(localeDayjs(event.start)), 'ms')
-          .format(DATETIME_FORMAT);
-
-        // if crossResourceMove disabled, slot returns old value
-        if (config.crossResourceMove === false) {
-          slotId = schedulerData._getEventSlotId(item);
-          slotName = undefined;
-          const slot = schedulerData.getSlotById(slotId);
-          if (slot) slotName = slot.name;
-        }
-
-        action = 'Move';
-      }
+      const drop = computeEventDropTimes({
+        schedulerData,
+        item,
+        type,
+        newStart,
+        newEnd,
+        initialStart,
+        slotId: resourceEvents.slotId,
+        slotName: resourceEvents.slotName,
+      });
 
       if (movingEvent) {
-        movingEvent(schedulerData, slotId, slotName, newStart, newEnd, action, type, item);
+        movingEvent(schedulerData, drop.slotId, drop.slotName, drop.newStart, drop.newEnd, drop.action, type, item);
       }
     },
 

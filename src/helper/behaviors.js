@@ -1,36 +1,62 @@
 import { ViewType, CellUnit } from '../config/constants';
 
-export const getSummary = () => ({ text: 'Summary', color: 'red', fontSize: '1.2rem' });
+/**
+ * @callback GetSummaryFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {Array} headerEvents - events for a header cell
+ * @param {Object} slotId - resource slot identifier
+ * @returns {{ text: string, color: string, fontSize: string }|undefined}
+ */
 
-export const getCustomDate = (schedulerData, num, date = schedulerData.startDate) => {
-  const { viewType, localeDayjs } = schedulerData;
-  let startDate;
-  let endDate;
-  let cellUnit;
+/**
+ * @callback GetCustomDateFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {number} num - navigation offset (0 = current, positive = forward, negative = backward)
+ * @param {string} [date] - base date string (defaults to schedulerData.startDate)
+ * @returns {{ startDate: string, endDate: string, cellUnit: number }}
+ */
 
-  if (viewType === ViewType.Custom1) {
-    const monday = localeDayjs(new Date(date)).startOf('week');
-    startDate = num === 0 ? monday : localeDayjs(new Date(monday)).add(2 * num, 'weeks');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'weeks').endOf('week');
-    cellUnit = CellUnit.Day;
-  } else if (viewType === ViewType.Custom2) {
-    const firstDayOfMonth = localeDayjs(new Date(date)).startOf('month');
-    startDate = num === 0 ? firstDayOfMonth : localeDayjs(new Date(firstDayOfMonth)).add(2 * num, 'months');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'months').endOf('month');
-    cellUnit = CellUnit.Day;
-  } else {
-    startDate = num === 0 ? date : localeDayjs(new Date(date)).add(2 * num, 'days');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'days');
-    cellUnit = CellUnit.Hour;
-  }
+/**
+ * @callback GetNonAgendaViewBodyCellBgColorFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {string} slotId - resource slot identifier
+ * @param {Object} header - header item with { start, end, nonWorkingTime, ... }
+ * @returns {string|undefined} CSS color string, or undefined for default
+ */
 
-  return { startDate, endDate, cellUnit };
-};
+/**
+ * @callback GetScrollSpecialDayjsFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @returns {import('dayjs').Dayjs} the dayjs moment to scroll to
+ */
 
-export const getNonAgendaViewBodyCellBgColor = (schedulerData, slotId, header) =>
-  header.nonWorkingTime ? undefined : '#87e8de';
+/**
+ * @callback GetDateLabelFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {number} viewType - current ViewType value
+ * @param {string} startDate - formatted start date
+ * @param {string} endDate - formatted end date
+ * @returns {string} human-readable date range label
+ */
 
-export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
+/**
+ * @callback GetEventTextFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {Object} event - event object with { id, title, resourceId, start, end, ... }
+ * @returns {string} display text for the event
+ */
+
+/**
+ * @callback IsNonWorkingTimeFunc
+ * @param {import('../models/SchedulerData').default} schedulerData
+ * @param {string} time - datetime string to check
+ * @returns {boolean} true if the time falls outside working hours
+ */
+
+// Default implementations — used when no override is provided via behaviors config.
+// Consumers can override any slot by passing a behaviors object to SchedulerData.
+
+const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   const { localeDayjs } = schedulerData;
   const start = localeDayjs(new Date(startDate));
   const end = localeDayjs(endDate);
@@ -56,17 +82,17 @@ export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   return dateLabel;
 };
 
-export const getEventText = (schedulerData, event) =>
+const getEventText = (schedulerData, event) =>
   schedulerData.isEventPerspective
     ? schedulerData.resources.find(item => item.id === event.resourceId)?.name || event.title
     : event.title;
 
-export const getScrollSpecialDayjs = schedulerData => {
+const getScrollSpecialDayjs = schedulerData => {
   const { localeDayjs } = schedulerData;
   return localeDayjs(new Date());
 };
 
-export const isNonWorkingTime = (schedulerData, time) => {
+const isNonWorkingTime = (schedulerData, time) => {
   const { localeDayjs, cellUnit } = schedulerData;
   if (cellUnit === CellUnit.Hour) {
     const hour = localeDayjs(new Date(time)).hour();
@@ -76,12 +102,35 @@ export const isNonWorkingTime = (schedulerData, time) => {
   return dayOfWeek === 0 || dayOfWeek === 6;
 };
 
+/**
+ * Default behavior callbacks for the scheduler.
+ *
+ * Each slot is either `undefined` (consumer must provide) or a built-in default.
+ * Override any slot by passing a `newBehaviors` object to the SchedulerData constructor.
+ *
+ * @type {{
+ *   getSummaryFunc: GetSummaryFunc|undefined,
+ *   getCustomDateFunc: GetCustomDateFunc|undefined,
+ *   getNonAgendaViewBodyCellBgColorFunc: GetNonAgendaViewBodyCellBgColorFunc|undefined,
+ *   getScrollSpecialDayjsFunc: GetScrollSpecialDayjsFunc,
+ *   getDateLabelFunc: GetDateLabelFunc,
+ *   getEventTextFunc: GetEventTextFunc,
+ *   isNonWorkingTimeFunc: IsNonWorkingTimeFunc,
+ * }}
+ */
 export default {
+  /** @type {GetSummaryFunc|undefined} Return summary info for a cell. Optional — no default. */
   getSummaryFunc: undefined,
+  /** @type {GetCustomDateFunc|undefined} Compute date range for custom view types. Optional — no default. */
   getCustomDateFunc: undefined,
+  /** @type {GetNonAgendaViewBodyCellBgColorFunc|undefined} Return cell background color. Optional — no default. */
   getNonAgendaViewBodyCellBgColorFunc: undefined,
+  /** @type {GetScrollSpecialDayjsFunc} Return the dayjs to auto-scroll to. Has a built-in default (now). */
   getScrollSpecialDayjsFunc: getScrollSpecialDayjs,
+  /** @type {GetDateLabelFunc} Format the header date label. Has a built-in default. */
   getDateLabelFunc: getDateLabel,
+  /** @type {GetEventTextFunc} Return display text for an event. Has a built-in default. */
   getEventTextFunc: getEventText,
+  /** @type {IsNonWorkingTimeFunc} Determine if a time is non-working. Has a built-in default. */
   isNonWorkingTimeFunc: isNonWorkingTime,
 };

@@ -42,12 +42,53 @@ export default class SchedulerData {
     this.calendarPopoverLocale = undefined;
     this.localeDayjs = dayjs;
     this.config = newConfig === undefined ? config : { ...config, ...newConfig };
+    this._normalizeConfig();
     this._updateLabelsFromI18n();
     this._validateMinuteStep(this.config.minuteStep);
     this.behaviors = newBehaviors === undefined ? behaviors : { ...behaviors, ...newBehaviors };
     this._resolveDate(0, date);
     this._createHeaders();
     this._createRenderData();
+  }
+
+  /**
+   * Normalize and validate config values at construction time.
+   *
+   * Ensures schedulerWidth is either a percentage string or a number,
+   * and coerces numeric strings (e.g. "800") to actual numbers so that
+   * downstream arithmetic never accidentally concatenates strings.
+   * @private
+   */
+  _normalizeConfig() {
+    const c = this.config;
+
+    // Normalize schedulerWidth: accept "100%", 800, or "800" → 800
+    if (typeof c.schedulerWidth === 'string' && !c.schedulerWidth.endsWith('%')) {
+      const parsed = Number(c.schedulerWidth);
+      if (!Number.isNaN(parsed)) {
+        c.schedulerWidth = parsed;
+      }
+    }
+
+    // Ensure numeric dimension fields are numbers, not numeric strings
+    const numericKeys = [
+      'besidesWidth',
+      'underneathHeight',
+      'schedulerMaxHeight',
+      'tableHeaderHeight',
+      'eventItemHeight',
+      'eventItemLineHeight',
+      'weekNumberRowHeight',
+      'minuteStep',
+    ];
+    numericKeys.forEach(key => {
+      if (typeof c[key] === 'string') {
+        const parsed = Number(c[key]);
+        if (!Number.isNaN(parsed)) {
+          c[key] = parsed;
+        }
+      }
+    });
   }
 
   /**

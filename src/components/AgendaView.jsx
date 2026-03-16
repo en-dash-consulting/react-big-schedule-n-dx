@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { getHeaderDimensions } from '../helper/headerHelper';
 import AgendaResourceEvents from './AgendaResourceEvents';
 
 function AgendaView(props) {
@@ -18,7 +19,7 @@ function AgendaView(props) {
   const { config, renderData } = schedulerData;
 
   const agendaResourceTableWidth = schedulerData.getResourceTableWidth();
-  const tableHeaderHeight = schedulerData.getTableHeaderHeight();
+  const { totalHeaderHeight, headerBorderStyle } = getHeaderDimensions(config);
   const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
   const { agendaViewHeader } = config;
 
@@ -45,7 +46,7 @@ function AgendaView(props) {
       <td>
         <table className="scheduler-table">
           <thead>
-            <tr style={{ height: tableHeaderHeight }}>
+            <tr style={{ height: totalHeaderHeight, borderBottom: headerBorderStyle }}>
               <th style={{ width: agendaResourceTableWidth }} className="header3-text">
                 {resourceName}
               </th>

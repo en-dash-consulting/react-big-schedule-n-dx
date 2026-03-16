@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ViewType } from '../config/constants';
+import { getHeaderDimensions } from '../helper/headerHelper';
 import AgendaView from './AgendaView';
 import BodyView from './BodyView';
 import DnDContext from './DnDContext';
@@ -384,9 +385,11 @@ function Scheduler(props) {
   // Event handlers
   const handleViewChange = useCallback(
     e => {
-      const viewType = parseInt(e.target.value.charAt(0), 10);
-      const showAgenda = e.target.value.charAt(1) === '1';
-      const isEventPerspective = e.target.value.charAt(2) === '1';
+      // View value format: "viewType|showAgenda|isEventPerspective" (pipe-delimited)
+      const parts = e.target.value.split('|');
+      const viewType = parseInt(parts[0], 10);
+      const showAgenda = parts[1] === '1';
+      const isEventPerspective = parts[2] === '1';
       onViewChange(schedulerData, { viewType, showAgenda, isEventPerspective });
     },
     [onViewChange, schedulerData]
@@ -412,7 +415,7 @@ function Scheduler(props) {
   const width = schedulerData.getSchedulerWidth();
   const { contentScrollbarHeight, contentScrollbarWidth, resourceScrollbarHeight, resourceScrollbarWidth } = state;
 
-  const { showWeekNumber, weekNumberRowHeight } = config;
+  const { totalHeaderHeight, showWeekNumber, weekNumberRowHeight, headerBorderStyle } = getHeaderDimensions(config);
 
   let tbodyContent = <tr />;
   if (showAgenda) {
@@ -485,7 +488,6 @@ function Scheduler(props) {
     };
 
     if (config.schedulerMaxHeight > 0) {
-      const totalHeaderHeight = config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0);
       schedulerContentStyle = {
         ...schedulerContentStyle,
         maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
@@ -522,8 +524,8 @@ function Scheduler(props) {
           <div className="resource-view">
             <div
               style={{
-                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+                borderBottom: headerBorderStyle,
+                height: totalHeaderHeight,
                 ...configTableHeaderStyle,
               }}
             >
@@ -540,7 +542,7 @@ function Scheduler(props) {
                       <tr style={{ height: weekNumberRowHeight }}>
                         <th
                           style={{
-                            borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+                            borderBottom: headerBorderStyle,
                             fontSize: '0.85em',
                             opacity: 0.7,
                             padding: '4px 8px',
@@ -582,8 +584,8 @@ function Scheduler(props) {
             <div
               style={{
                 overflow: 'hidden',
-                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+                borderBottom: headerBorderStyle,
+                height: totalHeaderHeight,
               }}
             >
               <div
@@ -681,8 +683,8 @@ Scheduler.propTypes = {
   updateEventEnd: PropTypes.func,
   moveEvent: PropTypes.func,
   movingEvent: PropTypes.func,
-  leftCustomHeader: PropTypes.object,
-  rightCustomHeader: PropTypes.object,
+  leftCustomHeader: PropTypes.node,
+  rightCustomHeader: PropTypes.node,
   newEvent: PropTypes.func,
   subtitleGetter: PropTypes.func,
   eventItemClick: PropTypes.func,

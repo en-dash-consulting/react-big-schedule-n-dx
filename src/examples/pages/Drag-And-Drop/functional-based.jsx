@@ -4,7 +4,7 @@ import { DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../..
 import DemoData from '../../sample-data/sample1';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
-import { DnDTypes } from '../../helpers/DnDTypes';
+import { ExampleDnDTypes } from '../../helpers/ExampleDnDTypes';
 
 const initialState = {
   showScheduler: false,
@@ -25,9 +25,9 @@ function reducer(state, action) {
 let schedulerData;
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, DnDTypes.TASK));
+  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, ExampleDnDTypes.TASK));
   const [resourceDndSource, setResourceDndSource] = useState(
-    new DnDSource(props => props.resource, true, DnDTypes.RESOURCE)
+    new DnDSource(props => props.resource, true, ExampleDnDTypes.RESOURCE)
   );
 
   useEffect(() => {
@@ -45,8 +45,8 @@ function DragAndDrop() {
     schedulerData.setEvents(DemoData.eventsForTaskView);
 
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
-    setTaskDndSource(new DnDSource(props => props.task, true, DnDTypes.TASK));
-    setResourceDndSource(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
+    setTaskDndSource(new DnDSource(props => props.task, true, ExampleDnDTypes.TASK));
+    setResourceDndSource(new DnDSource(props => props.resource, true, ExampleDnDTypes.RESOURCE));
 
     return () => {
       schedulerData = null;
@@ -111,14 +111,14 @@ function DragAndDrop() {
         bgColor: 'purple',
       };
 
-      if (type === DnDTypes.RESOURCE) {
+      if (type === ExampleDnDTypes.RESOURCE) {
         newEvent = {
           ...newEvent,
           groupId: slotId,
           groupName: slotName,
           resourceId: item.id,
         };
-      } else if (type === DnDTypes.TASK) {
+      } else if (type === ExampleDnDTypes.TASK) {
         newEvent = {
           ...newEvent,
           groupId: item.id,

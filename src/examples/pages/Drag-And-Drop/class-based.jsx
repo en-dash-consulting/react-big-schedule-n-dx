@@ -4,7 +4,7 @@ import { DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../..
 import DemoData from '../../sample-data/sample1';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
-import { DnDTypes } from '../../helpers/DnDTypes';
+import { ExampleDnDTypes } from '../../helpers/ExampleDnDTypes';
 
 class DragAndDrop extends Component {
   constructor(props) {
@@ -23,8 +23,8 @@ class DragAndDrop extends Component {
     schedulerData.setEvents(DemoData.eventsForTaskView);
     this.state = {
       viewModel: schedulerData,
-      taskDndSource: new DnDSource(props => props.task, true, DnDTypes.TASK),
-      resourceDndSource: new DnDSource(props => props.resource, true, DnDTypes.RESOURCE),
+      taskDndSource: new DnDSource(props => props.task, true, ExampleDnDTypes.TASK),
+      resourceDndSource: new DnDSource(props => props.resource, true, ExampleDnDTypes.RESOURCE),
     };
   }
 
@@ -142,14 +142,14 @@ class DragAndDrop extends Component {
         bgColor: 'purple',
       };
 
-      if (type === DnDTypes.RESOURCE) {
+      if (type === ExampleDnDTypes.RESOURCE) {
         newEvent = {
           ...newEvent,
           groupId: slotId,
           groupName: slotName,
           resourceId: item.id,
         };
-      } else if (type === DnDTypes.TASK) {
+      } else if (type === ExampleDnDTypes.TASK) {
         newEvent = {
           ...newEvent,
           groupId: item.id,

@@ -18,7 +18,8 @@ const SchedulerHeader = React.forwardRef(
     const dateLabel = schedulerData.getDateLabel();
     const selectDate = schedulerData.getSelectedDate();
     const calendarLocale = schedulerData.getCalendarPopoverLocale()?.default?.Calendar;
-    const defaultValue = `${viewType}${showAgenda ? 1 : 0}${isEventPerspective ? 1 : 0}`;
+    // View value format: "viewType|showAgenda|isEventPerspective" (pipe-delimited)
+    const defaultValue = `${viewType}|${showAgenda ? 1 : 0}|${isEventPerspective ? 1 : 0}`;
 
     const isMountedRef = useRef(true);
 
@@ -70,8 +71,8 @@ const SchedulerHeader = React.forwardRef(
 
     const radioButtonList = config.views.map(item => (
       <RadioButton
-        key={`${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`}
-        value={`${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`}
+        key={`${item.viewType}|${item.showAgenda ? 1 : 0}|${item.isEventPerspective ? 1 : 0}`}
+        value={`${item.viewType}|${item.showAgenda ? 1 : 0}|${item.isEventPerspective ? 1 : 0}`}
       >
         <span style={{ margin: '0px 8px' }}>{item.viewName}</span>
       </RadioButton>
@@ -140,8 +141,8 @@ SchedulerHeader.propTypes = {
   goBack: PropTypes.func.isRequired,
   onSelectDate: PropTypes.func.isRequired,
   schedulerData: PropTypes.object.isRequired,
-  leftCustomHeader: PropTypes.object,
-  rightCustomHeader: PropTypes.object,
+  leftCustomHeader: PropTypes.node,
+  rightCustomHeader: PropTypes.node,
   style: PropTypes.object,
 };
 

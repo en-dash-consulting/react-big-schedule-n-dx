@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { CellUnit } from '../config/constants';
+import { getHeaderDimensions } from '../helper/headerHelper';
 import { useCallback, useMemo } from 'react';
 
 /**
@@ -13,8 +14,12 @@ import { useCallback, useMemo } from 'react';
  */
 function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
-  const { showWeekNumber, weekNumberRowHeight = 24 } = config;
-  const headerHeight = schedulerData.getTableHeaderHeight();
+  const {
+    showWeekNumber,
+    weekNumberRowHeight,
+    tableHeaderHeight: headerHeight,
+    headerBorderStyle,
+  } = getHeaderDimensions(config);
   const cellWidth = schedulerData.getContentCellWidth();
   const minuteStepsInHour = schedulerData.getMinuteStepsInHour();
 
@@ -54,7 +59,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     const cellStyle = {
       fontSize: '0.85em',
       opacity: 0.7,
-      borderBottom: `1px solid ${config.headerBorderColor || '#e9e9e9'}`,
+      borderBottom: headerBorderStyle,
       padding: '4px 8px',
       textAlign: 'center',
     };
