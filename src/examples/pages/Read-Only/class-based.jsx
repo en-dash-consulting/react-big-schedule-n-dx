@@ -1,6 +1,7 @@
+import { Modal } from 'antd';
 import { Component } from 'react';
 
-import { Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Scheduler, SchedulerData, ViewType, WrapperFun } from '../../../index';
 import DemoData from '../../sample-data/sample1';
 
 class Readonly extends Component {
@@ -74,15 +75,15 @@ class Readonly extends Component {
   };
 
   eventClicked = (schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just clicked an event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops1 = (schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops2 = (schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   toggleExpandFunc = (schedulerData, slotId) => {
@@ -91,4 +92,4 @@ class Readonly extends Component {
   };
 }
 
-export default wrapperFun(Readonly);
+export default WrapperFun(Readonly);

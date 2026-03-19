@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { getHeaderDimensions } from '../helper/headerHelper';
+import { getHeaderDimensions } from './headerHelper';
 import AgendaResourceEvents from './AgendaResourceEvents';
 
 function AgendaView(props) {

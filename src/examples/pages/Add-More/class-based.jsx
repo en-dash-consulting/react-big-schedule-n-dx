@@ -1,5 +1,6 @@
+import { Modal } from 'antd';
 import { Component } from 'react';
-import { AddMorePopover, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { AddMorePopover, Scheduler, SchedulerData, ViewType, WrapperFun } from '../../../index';
 import DemoData from '../../sample-data/sample1';
 
 class AddMore extends Component {
@@ -107,84 +108,88 @@ class AddMore extends Component {
   };
 
   eventClicked = (schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just clicked an event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops1 = (schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops2 = (schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   newEvent = (schedulerData, slotId = '', slotName = '', start = '', end = '', type = '', item = '') => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
-      )
-    ) {
-      let newFreshId = 0;
-      schedulerData.events.forEach(item => {
-        if (item.id >= newFreshId) newFreshId = item.id + 1;
-      });
+        `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
+      onOk: () => {
+        let newFreshId = 0;
+        schedulerData.events.forEach(item => {
+          if (item.id >= newFreshId) newFreshId = item.id + 1;
+        });
 
-      let newEvent = {
-        id: newFreshId,
-        title: 'New event you just created',
-        start: start,
-        end: end,
-        resourceId: slotId,
-        bgColor: 'purple',
-      };
-      schedulerData.addEvent(newEvent);
-      this.setState({
-        viewModel: schedulerData,
-      });
-    }
+        let newEvent = {
+          id: newFreshId,
+          title: 'New event you just created',
+          start: start,
+          end: end,
+          resourceId: slotId,
+          bgColor: 'purple',
+        };
+        schedulerData.addEvent(newEvent);
+        this.setState({
+          viewModel: schedulerData,
+        });
+      },
+    });
   };
 
   updateEventStart = (schedulerData, event, newStart) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`
-      )
-    ) {
-      schedulerData.updateEventStart(event, newStart);
-    }
-    this.setState({
-      viewModel: schedulerData,
+        `eventTitle: ${event.title}, newStart: ${newStart}}`,
+      onOk: () => {
+        schedulerData.updateEventStart(event, newStart);
+        this.setState({
+          viewModel: schedulerData,
+        });
+      },
     });
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
-      )
-    ) {
-      schedulerData.updateEventEnd(event, newEnd);
-    }
-    this.setState({
-      viewModel: schedulerData,
+        `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
+      onOk: () => {
+        schedulerData.updateEventEnd(event, newEnd);
+        this.setState({
+          viewModel: schedulerData,
+        });
+      },
     });
   };
 
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
-          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
-      )
-    ) {
-      schedulerData.moveEvent(event, slotId, slotName, start, end);
-      this.setState({
-        viewModel: schedulerData,
-      });
-    }
+        `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
+      onOk: () => {
+        schedulerData.moveEvent(event, slotId, slotName, start, end);
+        this.setState({
+          viewModel: schedulerData,
+        });
+      },
+    });
   };
 
   onSetAddMoreState = newState => {
@@ -210,4 +215,4 @@ class AddMore extends Component {
   };
 }
 
-export default wrapperFun(AddMore);
+export default WrapperFun(AddMore);

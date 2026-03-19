@@ -1,9 +1,8 @@
-import { Col, Row, Typography } from 'antd';
-import { useEffect, useReducer, useState } from 'react';
-import { DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Col, Modal, Row, Typography } from 'antd';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { DnDSource, Scheduler, SchedulerData, ViewType, WrapperFun } from '../../../index';
 import DemoData from '../../sample-data/sample1';
-import ResourceList from '../../components/ResourceList';
-import TaskList from '../../components/TaskList';
+import DraggableList from '../../components/DraggableList';
 import { ExampleDnDTypes } from '../../helpers/ExampleDnDTypes';
 
 const initialState = {
@@ -22,16 +21,16 @@ function reducer(state, action) {
   }
 }
 
-let schedulerData;
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, ExampleDnDTypes.TASK));
   const [resourceDndSource, setResourceDndSource] = useState(
     new DnDSource(props => props.resource, true, ExampleDnDTypes.RESOURCE)
   );
+  const schedulerDataRef = useRef(null);
 
   useEffect(() => {
-    schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
+    const schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
       schedulerMaxHeight: 500,
       besidesWidth: window.innerWidth <= 1600 ? 400 : 500,
       views: [
@@ -44,12 +43,13 @@ function DragAndDrop() {
     schedulerData.setResources(DemoData.resources);
     schedulerData.setEvents(DemoData.eventsForTaskView);
 
+    schedulerDataRef.current = schedulerData;
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
     setTaskDndSource(new DnDSource(props => props.task, true, ExampleDnDTypes.TASK));
     setResourceDndSource(new DnDSource(props => props.resource, true, ExampleDnDTypes.RESOURCE));
 
     return () => {
-      schedulerData = null;
+      schedulerDataRef.current = null;
     };
   }, []);
 
@@ -79,97 +79,105 @@ function DragAndDrop() {
   };
 
   const eventClicked = (schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just clicked an event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const ops1 = (schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const ops2 = (schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
-      )
-    ) {
-      let newFreshId = 0;
-      schedulerData.events.forEach(item => {
-        if (item.id >= newFreshId) newFreshId = item.id + 1;
-      });
+        `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
+      onOk: () => {
+        let newFreshId = 0;
+        schedulerData.events.forEach(item => {
+          if (item.id >= newFreshId) newFreshId = item.id + 1;
+        });
 
-      let newEvent = {
-        id: newFreshId,
-        title: 'New event you just created',
-        start,
-        end,
-        resourceId: slotId,
-        bgColor: 'purple',
-      };
-
-      if (type === ExampleDnDTypes.RESOURCE) {
-        newEvent = {
-          ...newEvent,
-          groupId: slotId,
-          groupName: slotName,
-          resourceId: item.id,
+        let newEvent = {
+          id: newFreshId,
+          title: 'New event you just created',
+          start,
+          end,
+          resourceId: slotId,
+          bgColor: 'purple',
         };
-      } else if (type === ExampleDnDTypes.TASK) {
-        newEvent = {
-          ...newEvent,
-          groupId: item.id,
-          groupName: item.name,
-        };
-      }
 
-      schedulerData.addEvent(newEvent);
-      dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+        if (type === ExampleDnDTypes.RESOURCE) {
+          newEvent = {
+            ...newEvent,
+            groupId: slotId,
+            groupName: slotName,
+            resourceId: item.id,
+          };
+        } else if (type === ExampleDnDTypes.TASK) {
+          newEvent = {
+            ...newEvent,
+            groupId: item.id,
+            groupName: item.name,
+          };
+        }
+
+        schedulerData.addEvent(newEvent);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const updateEventStart = (schedulerData, event, newStart) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`
-      )
-    ) {
-      schedulerData.updateEventStart(event, newStart);
-    }
-    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+        `eventTitle: ${event.title}, newStart: ${newStart}}`,
+      onOk: () => {
+        schedulerData.updateEventStart(event, newStart);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+      onCancel: () => {
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const updateEventEnd = (schedulerData, event, newEnd) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
-      )
-    ) {
-      schedulerData.updateEventEnd(event, newEnd);
-    }
-    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+        `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
+      onOk: () => {
+        schedulerData.updateEventEnd(event, newEnd);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+      onCancel: () => {
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
-          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
-      )
-    ) {
-      schedulerData.moveEvent(event, slotId, slotName, start, end);
-      dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+        `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
+      onOk: () => {
+        schedulerData.moveEvent(event, slotId, slotName, start, end);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
-  const movingEvent = (schedulerData, slotId, slotName, newStart, newEnd, action, type, item) => {
-    console.log('moving event', schedulerData, slotId, slotName, newStart, newEnd, action, type, item);
-  };
+  const movingEvent = () => {};
 
   const subtitleGetter = (schedulerData, event) =>
     schedulerData.isEventPerspective ? schedulerData.getResourceById(event.resourceId).name : event.groupName;
@@ -215,13 +223,21 @@ function DragAndDrop() {
             </Col>
             <Col span={4}>
               {state.viewModel.isEventPerspective ? (
-                <ResourceList
+                <DraggableList
+                  items={state.viewModel.resources}
+                  itemKey="resource"
                   schedulerData={state.viewModel}
                   newEvent={newEvent}
-                  resourceDndSource={resourceDndSource}
+                  dndSource={resourceDndSource}
                 />
               ) : (
-                <TaskList schedulerData={state.viewModel} newEvent={newEvent} taskDndSource={taskDndSource} />
+                <DraggableList
+                  items={state.viewModel.eventGroups}
+                  itemKey="task"
+                  schedulerData={state.viewModel}
+                  newEvent={newEvent}
+                  dndSource={taskDndSource}
+                />
               )}
             </Col>
           </Row>
@@ -231,4 +247,4 @@ function DragAndDrop() {
   );
 }
 
-export default wrapperFun(DragAndDrop);
+export default WrapperFun(DragAndDrop);

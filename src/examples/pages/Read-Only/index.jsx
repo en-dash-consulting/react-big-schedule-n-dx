@@ -112,7 +112,7 @@ ReadOnlyGuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Basic() {
+function ReadOnly() {
   const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
@@ -143,4 +143,4 @@ function Basic() {
   );
 }
 
-export default Basic;
+export default ReadOnly;

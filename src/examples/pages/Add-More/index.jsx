@@ -113,7 +113,7 @@ AddMoreGuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Basic() {
+function AddMore() {
   const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
@@ -144,4 +144,4 @@ function Basic() {
   );
 }
 
-export default Basic;
+export default AddMore;

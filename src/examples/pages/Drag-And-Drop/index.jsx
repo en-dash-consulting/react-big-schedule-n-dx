@@ -3,7 +3,7 @@ import SourceCode from '../../components/SourceCode';
 import ClassBased from './class-based';
 import { URLS } from '../../constants';
 
-function Basic() {
+function DragAndDrop() {
   return (
     <>
       <Row align="middle" justify="center">
@@ -17,4 +17,4 @@ function Basic() {
   );
 }
 
-export default Basic;
+export default DragAndDrop;

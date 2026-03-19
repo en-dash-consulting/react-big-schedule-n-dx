@@ -1,8 +1,7 @@
-import { useEffect, useReducer, useState } from 'react';
-import { AddMorePopover, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Modal } from 'antd';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import { AddMorePopover, Scheduler, SchedulerData, ViewType, WrapperFun } from '../../../index';
 import DemoData from '../../sample-data/sample1';
-
-let schedulerData;
 
 const initialState = {
   showScheduler: false,
@@ -22,6 +21,7 @@ function reducer(state, action) {
 
 function AddMore() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const schedulerDataRef = useRef(null);
 
   const [popoverState, setPopoverState] = useState({
     headerItem: undefined,
@@ -31,7 +31,7 @@ function AddMore() {
   });
 
   useEffect(() => {
-    schedulerData = new SchedulerData('2022-12-18', ViewType.Week, false, false, {
+    const schedulerData = new SchedulerData('2022-12-18', ViewType.Week, false, false, {
       besidesWidth: 350,
       dayMaxEvents: 2,
       weekMaxEvents: 4,
@@ -43,7 +43,12 @@ function AddMore() {
     schedulerData.setResources(DemoData.resources);
     schedulerData.setEvents(DemoData.events);
 
+    schedulerDataRef.current = schedulerData;
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
+
+    return () => {
+      schedulerDataRef.current = null;
+    };
   }, []);
 
   const prevClick = schedulerData => {
@@ -71,76 +76,86 @@ function AddMore() {
   };
 
   const eventClicked = (schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just clicked an event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const ops1 = (schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const ops2 = (schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   const newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
-      )
-    ) {
-      let newFreshId = 0;
-      schedulerData.events.forEach(item => {
-        if (item.id >= newFreshId) newFreshId = item.id + 1;
-      });
+        `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
+      onOk: () => {
+        let newFreshId = 0;
+        schedulerData.events.forEach(item => {
+          if (item.id >= newFreshId) newFreshId = item.id + 1;
+        });
 
-      const newEvent = {
-        id: newFreshId,
-        title: 'New event you just created',
-        start,
-        end,
-        resourceId: slotId,
-        bgColor: 'purple',
-      };
-      schedulerData.addEvent(newEvent);
-      dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+        const newEvent = {
+          id: newFreshId,
+          title: 'New event you just created',
+          start,
+          end,
+          resourceId: slotId,
+          bgColor: 'purple',
+        };
+        schedulerData.addEvent(newEvent);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const updateEventStart = (schedulerData, event, newStart) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`
-      )
-    ) {
-      schedulerData.updateEventStart(event, newStart);
-    }
-    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+        `eventTitle: ${event.title}, newStart: ${newStart}}`,
+      onOk: () => {
+        schedulerData.updateEventStart(event, newStart);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+      onCancel: () => {
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const updateEventEnd = (schedulerData, event, newEnd) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
-      )
-    ) {
-      schedulerData.updateEventEnd(event, newEnd);
-    }
-    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+        `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
+      onOk: () => {
+        schedulerData.updateEventEnd(event, newEnd);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+      onCancel: () => {
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (
-      confirm(
+    Modal.confirm({
+      title: 'Confirm',
+      content:
         `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, ` +
-          `newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
-      )
-    ) {
-      schedulerData.moveEvent(event, slotId, slotName, start, end);
-      dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+        `newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
+      onOk: () => {
+        schedulerData.moveEvent(event, slotId, slotName, start, end);
+        dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
+      },
+    });
   };
 
   const onSetAddMoreState = newState => {
@@ -212,4 +227,4 @@ function AddMore() {
   );
 }
 
-export default wrapperFun(AddMore);
+export default WrapperFun(AddMore);

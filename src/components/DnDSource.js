@@ -1,5 +1,5 @@
 import { DnDTypes } from '../config/constants';
-import { computeEventDropTimes } from '../helper/dndHelper';
+import { computeEventDropTimes } from '../helpers/dndHelper';
 
 export default class DnDSource {
   constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {

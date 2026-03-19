@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ViewType } from '../config/constants';
-import { getHeaderDimensions } from '../helper/headerHelper';
+import { getHeaderDimensions } from './headerHelper';
 import AgendaView from './AgendaView';
 import BodyView from './BodyView';
 import DnDContext from './DnDContext';

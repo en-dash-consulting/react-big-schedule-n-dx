@@ -1,6 +1,6 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { Component, createRef } from 'react';
-import { Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { Scheduler, SchedulerData, ViewType, WrapperFun } from '../../../index';
 import DemoData from '../../sample-data/sample1';
 
 // Top-level constant for initial SchedulerData, following other examples
@@ -65,15 +65,15 @@ class ResizeByParent extends Component {
   };
 
   eventClicked = (schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just clicked an event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops1 = (schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   ops2 = (schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    Modal.info({ title: 'Info', content: `You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}` });
   };
 
   increaseWidth = () => {
@@ -169,4 +169,4 @@ class ResizeByParent extends Component {
   }
 }
 
-export default wrapperFun(ResizeByParent);
+export default WrapperFun(ResizeByParent);

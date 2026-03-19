@@ -1,5 +1,5 @@
 import { DnDTypes, CellUnit, DATETIME_FORMAT } from '../config/constants';
-import { computeEventDropTimes } from '../helper/dndHelper';
+import { computeEventDropTimes } from '../helpers/dndHelper';
 import { getPos } from './domUtils';
 
 export default class DnDContext {

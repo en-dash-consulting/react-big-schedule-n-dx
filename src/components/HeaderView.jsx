@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { CellUnit } from '../config/constants';
-import { getHeaderDimensions } from '../helper/headerHelper';
+import { CellUnit } from '../config';
+import { getHeaderDimensions } from './headerHelper';
 import { useCallback, useMemo } from 'react';
 
 /**
